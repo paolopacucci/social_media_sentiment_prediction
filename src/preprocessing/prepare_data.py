@@ -1,7 +1,7 @@
 from pathlib import Path
 import pandas as pd
 
-raw_data_path = Path("data/raw/sentiment_raw.csv")
+raw_data_path = Path("data/raw/train_df_raw.csv")
 preprocessed_data_path = Path("data/processed/sentiment_preprocessed.csv")
 
 def load_raw_data(path: Path) -> pd.DataFrame:
@@ -32,7 +32,7 @@ def validate_data(df: pd.DataFrame) -> None:
     if df.isnull().any().any():
         raise ValueError("Dataset contains Null values")
     
-    if (df["text"].str.strip() == "").any():
+    if (df["text"].str.strip() == "").any(): 
         raise ValueError("Empty text values found")
 
 def save_processed_data(df: pd.DataFrame, path: Path) -> None:
