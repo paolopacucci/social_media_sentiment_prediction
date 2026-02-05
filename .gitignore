@@ -1,2 +1,17 @@
 .DS_Store
+Thumbs.db
+
 .venv/
+__pycache__/
+.pytest_cache/
+.cache/
+*.pyc
+.cache/
+
+artifacts/
+data/processed/
+data/split/
+
+.hf_cache/
+.cache/huggingface/
+.cache/torch/

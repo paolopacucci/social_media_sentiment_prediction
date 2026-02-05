@@ -1,14 +1,16 @@
 from pathlib import Path
+
 import pandas as pd
 from datasets import Dataset
 from transformers import AutoTokenizer, AutoModelForSequenceClassification, TrainingArguments, Trainer
 
+
 MODEL_NAME = "cardiffnlp/twitter-roberta-base-sentiment-latest"
 
-RUN_NAME = "model"
+RUN_NAME = "epoch_1"
 TRAIN_PATH = Path("data/split/train.csv")
 VAL_PATH = Path("data/split/val.csv")
-OUTPUT_DIR = Path(f"artifacts/{RUN_NAME}")
+OUTPUT_DIR = Path("artifacts/experiments/model_{RUN_NAME}")
 
 # Ordine ufficiale del modello:
 # 0 = negative, 1 = neutral, 2 = positive
