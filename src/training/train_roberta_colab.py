@@ -95,19 +95,20 @@ def main():
 
     model = build_model()
 
-    # Parametri "più seri" ma non NASA: pensati per Colab T4
+
     args = TrainingArguments(
-        output_dir="artifacts/tmp_training",
+        output_dir="/content/drive/MyDrive/social_media_reputation/artifacts/tmp_training",
         per_device_train_batch_size=16,
         per_device_eval_batch_size=16,
         learning_rate=2e-5,
         num_train_epochs=3,
         weight_decay=0.01,
         warmup_ratio=0.06,
-        evaluation_strategy="epoch",
-        save_strategy="no",          # niente checkpoint pesanti
+        eval_strategy="epoch",
+        save_strategy="epoch",   
+        save_total_limit=1,     
         logging_steps=50,
-        fp16=True,                   # mixed precision su GPU NVIDIA
+        fp16=True,                  
         report_to="none",
         load_best_model_at_end=True,
         metric_for_best_model="macro_f1",
@@ -129,9 +130,6 @@ def main():
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     trainer.save_model(str(OUTPUT_DIR))
     tokenizer.save_pretrained(str(OUTPUT_DIR))
-
-    save_run_info()
-    print(f"OK: saved final model to {OUTPUT_DIR}")
 
 
 if __name__ == "__main__":
