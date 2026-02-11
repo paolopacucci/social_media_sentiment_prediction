@@ -19,7 +19,7 @@ MODEL_NAME = "cardiffnlp/twitter-roberta-base-sentiment-latest"
 
 TRAIN_PATH = Path("data/split/train.csv")
 VAL_PATH = Path("data/split/val.csv")
-OUTPUT_DIR = Path("artifacts/model")
+OUTPUT_DIR = Path("/content/drive/MyDrive/social_media_reputation/artifacts/model")
 REPORTS_DIR = Path("reports/current")
 
 LABEL2ID = {"negative": 0, "neutral": 1, "positive": 2}
