@@ -10,9 +10,9 @@ import matplotlib.pyplot as plt
 import torch
 
 
-MODEL_DIR = Path("artifacts/model")
+MODEL_DIR = Path("/content/drive/MyDrive/social_media_reputation/artifacts/model")
 TEST_PATH = Path("data/split/test.csv")
-REPORTS_DIR = Path("reports/baseline")
+REPORTS_DIR = Path("/content/drive/MyDrive/social_media_reputation/reports/current")
 
 LABELS = ["negative", "neutral", "positive"]
 LABEL2ID = {"negative": 0, "neutral": 1, "positive": 2}
