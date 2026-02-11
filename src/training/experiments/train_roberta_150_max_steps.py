@@ -5,9 +5,10 @@ from transformers import AutoTokenizer, AutoModelForSequenceClassification, Trai
 
 MODEL_NAME = "cardiffnlp/twitter-roberta-base-sentiment-latest"
 
+RUN_NAME = "150_max_steps"
 TRAIN_PATH = Path("data/split/train.csv")
 VAL_PATH = Path("data/split/val.csv")
-OUTPUT_DIR = Path("artifacts/experiments/model_150_max_steps")
+OUTPUT_DIR = Path(f"artifacts/experiments/model_{RUN_NAME}")
 
 # Ordine ufficiale del modello:
 # 0 = negative, 1 = neutral, 2 = positive
@@ -49,10 +50,8 @@ def main():
         per_device_train_batch_size=4,
         per_device_eval_batch_size=4,
         max_steps=150,
-        eval_strategy="steps",
-        eval_steps=50,
-        save_strategy="steps",
-        save_steps=100,
+        eval_strategy="no",
+        save_strategy="no",
         report_to="none",
     )
 

@@ -62,12 +62,8 @@ def main():
         # epoch-based training
         num_train_epochs=1,
 
-        # evaluation/saving durante training (semplice)
-        eval_strategy="steps",
-        eval_steps=200,
-        save_strategy="steps",
-        save_steps=200,
-
+        eval_strategy="no",
+        save_strategy="no",
         report_to="none",
     )
 

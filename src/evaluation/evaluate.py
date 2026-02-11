@@ -12,7 +12,7 @@ import torch
 
 MODEL_DIR = Path("artifacts/model")
 TEST_PATH = Path("data/split/test.csv")
-REPORTS_DIR = Path("reports/current/reports")
+REPORTS_DIR = Path("reports/baseline")
 
 LABELS = ["negative", "neutral", "positive"]
 LABEL2ID = {"negative": 0, "neutral": 1, "positive": 2}
@@ -55,13 +55,13 @@ def main():
     REPORTS_DIR.mkdir(parents=True, exist_ok=True)
 
     metrics = {
+        "run_name": "model",
         "accuracy": float(acc),
         "macro_f1": float(macro_f1),
         "n_test": int(len(df)),
     }
 
     with open(REPORTS_DIR / "eval_metrics.json", "w", encoding="utf-8") as f:
-        print("run_name: epoch_1")/n
         json.dump(metrics, f, indent=2)
 
     # 5) confusion matrix

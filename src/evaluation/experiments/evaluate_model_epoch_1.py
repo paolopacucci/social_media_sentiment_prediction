@@ -10,9 +10,9 @@ import matplotlib.pyplot as plt
 import torch
 
 
-MODEL_DIR = Path("artifacts/model_epoch_1")
+MODEL_DIR = Path("artifacts/experiments/model_epoch_1")
 TEST_PATH = Path("data/split/test.csv")
-REPORTS_DIR = Path("reports")
+REPORTS_DIR = Path("reports/experiments/reports_epoch_1")
 
 LABELS = ["negative", "neutral", "positive"]
 LABEL2ID = {"negative": 0, "neutral": 1, "positive": 2}
@@ -55,13 +55,13 @@ def main():
     REPORTS_DIR.mkdir(parents=True, exist_ok=True)
 
     metrics = {
+        "run_name": "epoch_1",
         "accuracy": float(acc),
         "macro_f1": float(macro_f1),
         "n_test": int(len(df)),
     }
 
     with open(REPORTS_DIR / "eval_metrics.json", "w", encoding="utf-8") as f:
-        print("run_name: epoch_1")/n
         json.dump(metrics, f, indent=2)
 
     # 5) confusion matrix

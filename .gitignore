@@ -6,12 +6,6 @@ __pycache__/
 .pytest_cache/
 .cache/
 *.pyc
-.cache/
+.hf_cache/
 
 artifacts/
-data/processed/
-data/split/
-
-.hf_cache/
-.cache/huggingface/
-.cache/torch/

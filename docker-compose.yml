@@ -1,0 +1,108 @@
+services:
+  preprocess:
+    build: .
+    container_name: preprocess
+    command:
+      [
+        "bash",
+        "-lc",
+        "test -f data/processed/performance_monitoring_batch.csv && test -f data/processed/sentiment_monitoring_batch_text.csv && echo 'preprocess: already done' || (python src/preprocessing/prepare_performance_monitoring.py && python src/preprocessing/prepare_sentiment_monitoring.py)"
+      ]
+    volumes:
+      - ./data:/app/data
+
+  api:
+    build: .
+    container_name: api
+    environment:
+      - MODEL_ID=paolopacucci/sentiment-roberta
+    ports:
+      - "8000:8000"
+    depends_on:
+      - preprocess
+    restart: unless-stopped
+
+  performance_exporter:
+    build: .
+    container_name: performance_exporter
+    command: ["python", "-m", "src.monitoring.performance_exporter"]
+    environment:
+      - MODEL_ID=paolopacucci/sentiment-roberta
+      - PERF_DATA_PATH=data/processed/performance_monitoring_batch.csv
+      - INTERVAL_SECONDS=60
+      - BATCH_SIZE=100
+      - MAX_LENGTH=64
+      # soglia “logica” (la useremo dopo nel retraining)
+      - RETRAIN_THRESHOLD=0.72
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./data:/app/data
+    depends_on:
+      - preprocess
+    restart: unless-stopped
+
+  sentiment_generator:
+    build: .
+    container_name: sentiment_generator
+    command: ["python", "-m", "src.monitoring.sentiment_generator"]
+    environment:
+      - API_URL=http://api:8000
+      - INTERVAL_SECONDS=15
+      - BATCH_SIZE=50
+      - SENTIMENT_DATA_PATH=data/processed/sentiment_monitoring_batch_text.csv
+    volumes:
+      - ./data:/app/data
+    depends_on:
+      - api
+      - preprocess
+    restart: unless-stopped
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    depends_on:
+      - api
+      - performance_exporter
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana-enterprise
+    container_name: grafana
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    depends_on:
+      - prometheus
+
+  # ----------------------------
+  # Retraining (DISABILITATO di default)
+  # Si avvia solo con: docker compose --profile retrain up --build
+  # ----------------------------
+  retrainer:
+    profiles: ["retrain"]
+    build: .
+    container_name: retrainer
+    command: ["python", "-m", "src.retraining.retrainer"]
+    environment:
+      - MODEL_ID=paolopacucci/sentiment-roberta
+      # qui decidi quali dati usare per retrain (esempio: performance batch processed)
+      - RETRAIN_DATA_PATH=data/processed/performance_monitoring_batch.csv
+      # dove salvare eventuali artifacts/reports dentro container (se li vuoi)
+      - REPORTS_DIR=reports/retrain
+      # soglia per decidere se partire (la implementiamo nello script)
+      - RETRAIN_THRESHOLD=0.72
+      # default: non partire in loop (1 run e stop) → didattico
+      - MODE=once
+    volumes:
+      - ./data:/app/data
+      - ./reports:/app/reports
+    depends_on:
+      - preprocess

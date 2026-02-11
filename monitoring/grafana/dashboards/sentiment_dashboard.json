@@ -1,0 +1,112 @@
+{
+    "annotations": { "list": [] },
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 0,
+    "id": null,
+    "links": [],
+    "panels": [
+      {
+        "datasource": "Prometheus",
+        "fieldConfig": { "defaults": {}, "overrides": [] },
+        "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+        "id": 1,
+        "options": { "legend": { "displayMode": "list", "placement": "bottom" } },
+        "targets": [
+          {
+            "expr": "sum by (label) (rate(predictions_by_label_total[1m]))",
+            "legendFormat": "{{label}}",
+            "refId": "A"
+          }
+        ],
+        "title": "Predictions per label (req/s) [last 1m]",
+        "type": "timeseries"
+      },
+      {
+        "datasource": "Prometheus",
+        "fieldConfig": { "defaults": {}, "overrides": [] },
+        "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+        "id": 2,
+        "options": { "legend": { "displayMode": "list", "placement": "bottom" } },
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, sum by (le) (rate(predict_latency_seconds_bucket[1m])))",
+            "legendFormat": "p95",
+            "refId": "A"
+          },
+          {
+            "expr": "histogram_quantile(0.50, sum by (le) (rate(predict_latency_seconds_bucket[1m])))",
+            "legendFormat": "p50",
+            "refId": "B"
+          }
+        ],
+        "title": "Predict latency (seconds) quantiles",
+        "type": "timeseries"
+      },
+      {
+        "datasource": "Prometheus",
+        "fieldConfig": { "defaults": {}, "overrides": [] },
+        "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+        "id": 3,
+        "options": { "legend": { "displayMode": "list", "placement": "bottom" } },
+        "targets": [
+          {
+            "expr": "rate(predictions_total[1m])",
+            "legendFormat": "predictions_total",
+            "refId": "A"
+          }
+        ],
+        "title": "Total prediction rate (req/s) [last 1m]",
+        "type": "timeseries"
+      },
+      {
+        "datasource": "Prometheus",
+        "fieldConfig": { "defaults": {}, "overrides": [] },
+        "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
+        "id": 4,
+        "options": { "legend": { "displayMode": "list", "placement": "bottom" } },
+        "targets": [
+          { "expr": "performance_accuracy", "legendFormat": "accuracy", "refId": "A" },
+          { "expr": "performance_macro_f1", "legendFormat": "macro_f1", "refId": "B" }
+        ],
+        "title": "Performance monitoring (accuracy / macro_f1)",
+        "type": "timeseries"
+      },
+      {
+        "datasource": "Prometheus",
+        "fieldConfig": { "defaults": {}, "overrides": [] },
+        "gridPos": { "h": 6, "w": 12, "x": 0, "y": 16 },
+        "id": 5,
+        "options": { "legend": { "displayMode": "list", "placement": "bottom" } },
+        "targets": [
+          { "expr": "retrain_needed", "legendFormat": "retrain_needed", "refId": "A" }
+        ],
+        "title": "Retrain needed flag (0/1)",
+        "type": "timeseries"
+      },
+      {
+        "datasource": "Prometheus",
+        "fieldConfig": { "defaults": {}, "overrides": [] },
+        "gridPos": { "h": 6, "w": 12, "x": 12, "y": 16 },
+        "id": 6,
+        "options": { "legend": { "displayMode": "list", "placement": "bottom" } },
+        "targets": [
+          { "expr": "retrain_trigger_total", "legendFormat": "retrain_trigger_total", "refId": "A" }
+        ],
+        "title": "Retrain triggers (counter)",
+        "type": "timeseries"
+      }
+    ],
+    "refresh": "10s",
+    "schemaVersion": 38,
+    "style": "dark",
+    "tags": ["mlops", "sentiment"],
+    "templating": { "list": [] },
+    "time": { "from": "now-15m", "to": "now" },
+    "timepicker": {},
+    "timezone": "",
+    "title": "Sentiment Monitoring Dashboard",
+    "uid": "sentiment-monitoring",
+    "version": 1
+  }
+  

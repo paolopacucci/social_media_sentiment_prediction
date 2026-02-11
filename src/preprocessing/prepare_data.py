@@ -1,7 +1,7 @@
 from pathlib import Path
 import pandas as pd
 
-raw_data_path = Path("data/raw/train_df_raw.csv")
+raw_data_path = Path("data/raw/sentiment_dataset.csv")
 preprocessed_data_path = Path("data/processed/sentiment_preprocessed.csv")
 
 def load_raw_data(path: Path) -> pd.DataFrame:

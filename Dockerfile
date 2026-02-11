@@ -2,13 +2,15 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-# Copia requirements e installa
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    HF_HOME=/app/.hf_cache \
+    TRANSFORMERS_CACHE=/app/.hf_cache
+
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copia il codice e (quando esiste) il modello salvato
 COPY src ./src
-COPY artifacts/model ./artifacts/model
 
 EXPOSE 8000
 

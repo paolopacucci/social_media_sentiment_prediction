@@ -62,7 +62,6 @@ def main():
     }
 
     with open(REPORTS_DIR / "eval_metrics.json", "w", encoding="utf-8") as f:
-        print("run_name: 150_max_steps")/n
         json.dump(metrics, f, indent=2)
 
     # 5) confusion matrix

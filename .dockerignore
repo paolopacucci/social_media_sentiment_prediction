@@ -1,22 +1,22 @@
 .venv
 __pycache__
 *.pyc
+.pytest_cache/
+.cache/
+.hf_cache/ 
 .DS_Store
 
 .git/
 .github/
 
-data/
-reports/
-
-artifacts/experiments/
-artifacts/**/checkpoint-*
+data
+reports
+artifacts
 
 src/evaluation/
 src/preprocessing/
 src/training/
 tests/
 
-requirements.txt
 .python-version
 README.md
