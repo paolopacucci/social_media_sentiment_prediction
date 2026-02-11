@@ -28,6 +28,9 @@ def main():
     # 2) load model + tokenizer (usa safetensors se presente)
     tokenizer = AutoTokenizer.from_pretrained(MODEL_DIR)
     model = AutoModelForSequenceClassification.from_pretrained(MODEL_DIR, use_safetensors=True)
+
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    model.to(device)
     model.eval()
 
     # 3) predict (batch semplice)
@@ -44,6 +47,8 @@ def main():
                 max_length=64,   # coerente con training
                 return_tensors="pt",
             )
+            enc = {k: v.to(device) for k, v in enc.items()}
+            
             outputs = model(**enc)
             preds = torch.argmax(outputs.logits, dim=-1).cpu().numpy().tolist()
             y_pred.extend(preds)

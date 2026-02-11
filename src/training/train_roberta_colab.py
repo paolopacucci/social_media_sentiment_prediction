@@ -84,18 +84,6 @@ def compute_metrics(eval_pred):
     }
 
 
-def save_run_info():
-    REPORTS_DIR.mkdir(parents=True, exist_ok=True)
-    info = {
-        "base_model": MODEL_NAME,
-        "output_dir": str(OUTPUT_DIR),
-        "max_length": MAX_LENGTH,
-        "labels": list(LABEL2ID.keys()),
-    }
-    with open(REPORTS_DIR / "run_info.json", "w", encoding="utf-8") as f:
-        json.dump(info, f, indent=2)
-
-
 def main():
     train_df = map_labels(load_split_csv(TRAIN_PATH))
     val_df = map_labels(load_split_csv(VAL_PATH))
