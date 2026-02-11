@@ -120,10 +120,10 @@ def main():
         args=args,
         train_dataset=train_ds,
         eval_dataset=val_ds,
-        tokenizer=tokenizer,
         compute_metrics=compute_metrics,
         callbacks=[EarlyStoppingCallback(early_stopping_patience=1)],
     )
+
 
     trainer.train()
 
