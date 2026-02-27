@@ -13,7 +13,8 @@ from src.config import (
     MODEL_ID,
     TEXT_COL, 
     LABEL_COL,
-    ARTIFACT_MODEL_DIR, 
+    ARTIFACT_MODEL_DIR
+    PUSH_AFTER_TRAIN, 
 )
 from src.data.prepare_data import prepare_training_data
 from src.data.split_data import split_training_data
