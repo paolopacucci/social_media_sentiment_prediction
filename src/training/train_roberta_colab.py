@@ -98,7 +98,7 @@ def main() -> None:
     print(f"Saved final metrics to: {metrics_path}")
     print(json.dumps(metrics, indent=2, ensure_ascii=False))
 
-     if PUSH_AFTER_TRAIN:
+    if PUSH_AFTER_TRAIN:
         push_model_dir(ARTIFACT_MODEL_DIR, commit_prefix="initial-train")
 
 if __name__ == "__main__":
