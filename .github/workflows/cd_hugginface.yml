@@ -1,0 +1,87 @@
+name: CD - deploy app to Hugging Face Space
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+jobs:
+  deploy-space:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install deploy dependency
+        run: |
+          python -m pip install --upgrade pip
+          pip install huggingface-hub==0.24.6
+
+      - name: Prepare Space folder
+        run: |
+          python - <<'PY'
+          import re
+          import shutil
+          from pathlib import Path
+
+          deploy_dir = Path("space_deploy")
+          deploy_dir.mkdir(exist_ok=True)
+
+          shutil.copy("Dockerfile", deploy_dir / "Dockerfile")
+          shutil.copy("requirements.txt", deploy_dir / "requirements.txt")
+          shutil.copytree("src", deploy_dir / "src", dirs_exist_ok=True)
+
+          config_path = deploy_dir / "src" / "config.py"
+          text = config_path.read_text(encoding="utf-8")
+          text = re.sub(r'^HF_TOKEN\s*=.*$', 'HF_TOKEN = ""', text, flags=re.MULTILINE)
+          config_path.write_text(text, encoding="utf-8")
+
+          readme = """---
+          title: Sentiment API
+          sdk: docker
+          app_port: 8000
+          pinned: false
+          ---
+
+          # Sentiment API
+
+          Docker Space that runs the same FastAPI app used in the project.
+          """
+          (deploy_dir / "README.md").write_text(readme, encoding="utf-8")
+          PY
+
+      - name: Deploy to Hugging Face Space
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          HF_SPACE_ID: ${{ secrets.HF_SPACE_ID }}
+        run: |
+          python - <<'PY'
+          import os
+          from huggingface_hub import HfApi
+
+          api = HfApi(token=os.environ["HF_TOKEN"])
+
+          api.create_repo(
+              repo_id=os.environ["HF_SPACE_ID"],
+              repo_type="space",
+              space_sdk="docker",
+              exist_ok=True,
+          )
+
+          api.upload_folder(
+              repo_id=os.environ["HF_SPACE_ID"],
+              repo_type="space",
+              folder_path="space_deploy",
+              commit_message="deploy app from GitHub Actions",
+          )
+
+          print("Deployed Space:", os.environ["HF_SPACE_ID"])
+          PY

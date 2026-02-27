@@ -1,0 +1,72 @@
+version: "3.9"
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: api
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped
+
+  performance_exporter:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: performance_exporter
+    command: python -m src.monitoring.performance_exporter
+    depends_on:
+      - api
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped
+
+  sentiment_generator:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sentiment_generator
+    command: python -m src.monitoring.sentiment_generator
+    depends_on:
+      - api
+    ports:
+      - "8002:8002"
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    depends_on:
+      - api
+      - performance_exporter
+      - sentiment_generator
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana-oss:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    volumes:
+      - ./monitoring/grafana/provisioning/datasources/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml:ro
+      - ./monitoring/grafana/provisioning/dashboards/dashboard.yml:/etc/grafana/provisioning/dashboards/dashboard.yml:ro
+      - ./monitoring/grafana/dashboards/sentiment_dashboard.json:/var/lib/grafana/dashboards/sentiment_dashboard.json:ro
+    depends_on:
+      - prometheus
+    restart: unless-stopped
