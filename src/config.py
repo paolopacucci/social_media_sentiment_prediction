@@ -10,9 +10,9 @@ TEXT_COL = "text"
 LABEL_COL = "label"
 
 # Raw datasets
-RAW_SENTIMENT_DATASET = Path("data/raw/sentiment_dataset.csv")
-RAW_SENTIMENT_MONITORING_BATCH = Path("data/raw/sentiment_monitoring_batch.csv")
-RAW_PERFORMANCE_MONITORING_BATCH = Path("data/raw/performance_monitoring_batch.csv")
+RAW_SENTIMENT_DATASET = Path("data/raw/sentiment_dataset_raw.csv")
+RAW_SENTIMENT_MONITORING_BATCH = Path("data/raw/sentiment_monitoring_batch_raw.csv")
+RAW_PERFORMANCE_MONITORING_BATCH = Path("data/raw/performance_monitoring_batch_raw.csv")
 
 # Output folders
 PREPROCESSED_DIR = Path("data/preprocessed")
