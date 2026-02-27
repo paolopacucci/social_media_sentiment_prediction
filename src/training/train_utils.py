@@ -56,7 +56,6 @@ def build_model(
     return AutoModelForSequenceClassification.from_pretrained(
         model_base,
         num_labels=3,
-        use_safetensors=True,
     )
 
 
