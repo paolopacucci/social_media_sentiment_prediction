@@ -62,7 +62,7 @@ def main() -> None:
         fp16=torch.cuda.is_available(),                  
         report_to="none",
         load_best_model_at_end=True,
-        metric_for_best_model="f1_macro",
+        metric_for_best_model="macro_f1",
         greater_is_better=True,
     )
 
@@ -83,7 +83,7 @@ def main() -> None:
     metrics = {
         "model_name": MODEL_ID,
         "test_accuracy": float(test_metrics.get("test_accuracy", 0.0)),
-        "test_f1_macro": float(test_metrics.get("test_f1_macro", 0.0)),
+        "test_f1_macro": float(test_metrics.get("test_macro_f1", 0.0)),
     }
 
     ARTIFACT_MODEL_DIR.mkdir(parents=True, exist_ok=True)
