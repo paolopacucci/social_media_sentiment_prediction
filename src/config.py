@@ -1,9 +1,10 @@
+import os
 from pathlib import Path
 
 # Models
 MODEL_BASE = "cardiffnlp/twitter-roberta-base-sentiment-latest"
 MODEL_ID = "paolopacucci/sentiment-roberta"
-HF_TOKEN = "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"
+HF_TOKEN = os.getenv("HF_TOKEN", "").strip()
 
 # Columns
 TEXT_COL = "text"
@@ -38,7 +39,7 @@ UNFREEZE_LAST_N_LAYERS = 0
 MAX_STEPS = 120
 
 PUSH_AFTER_TRAIN = True
-PUSH_AFTER_RETRAIN = True
+PUSH_AFTER_RETRAIN = False
 
 # API
 API_PORT = 8000

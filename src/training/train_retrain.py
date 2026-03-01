@@ -109,12 +109,13 @@ def main()-> None:
     )
 
     trainer.train()
-    test_metrics = trainer.evaluate(eval_dataset=test_ds)
+    
+    test_metrics = trainer.evaluate(eval_dataset=test_ds, metric_key_prefix="test")
 
     metrics = {
         "model_name": MODEL_ID,
         "test_accuracy": float(test_metrics.get("test_accuracy", 0.0)),
-        "test_f1_macro": float(test_metrics.get("test_macro_f1", 0.0)),
+        "test_macro_f1": float(test_metrics.get("test_macro_f1", 0.0)),
     }
 
     metrics_path = ARTIFACT_MODEL_DIR_RETRAIN / "retrain_metrics.json"
