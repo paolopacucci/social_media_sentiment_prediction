@@ -17,6 +17,21 @@ from src.app.schemas import PredictItem, PredictRequest, PredictResponse
 app = FastAPI(title="Sentiment API", version="1.0")
 
 
+#Endpoint root (/) per rendere la homepage della Space più chiara.
+#Senza questo endpoint, la pagina Space mostrava {"detail":"Not Found"} perché l’API esponeva solo /health, /metrics e /predict.
+@app.get("/")
+def root() -> dict:
+    return {
+        "message": "Sentiment RoBERTa API is running",
+        "available_endpoints": {
+            "docs": "/docs",
+            "health": "/health",
+            "metrics": "/metrics",
+            "predict": "/predict",
+        },
+    }
+
+
 @app.on_event("startup")
 def startup_event() -> None:
     try:
