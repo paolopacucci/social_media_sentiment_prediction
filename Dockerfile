@@ -7,9 +7,11 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     HF_HOME=/app/.hf_cache \
     TRANSFORMERS_CACHE=/app/.hf_cache
 
+COPY requirements-cpu.txt .
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt && \
-    pip install --no-cache-dir --force-reinstall --index-url https://download.pytorch.org/whl/cpu "torch==2.6.0"
+
+RUN pip install --no-cache-dir -r requirements-cpu.txt && \
+    pip install --no-cache-dir -r requirements.txt
 
 COPY src ./src
 
