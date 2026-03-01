@@ -20,6 +20,7 @@ from src.config import (
     WINDOW_CONSECUTIVE,
     F1_THRESHOLD,
     TRIGGER_RETRAIN,
+    RUN_RETRAIN,
 )
 
 F1_MACRO_WINDOW = Gauge("f1_macro_window", "Macro F1 on performance monitoring batch")
@@ -54,7 +55,8 @@ def main() -> None:
     print(f"[performance_exporter] metrics on :{PERF_METRICS_PORT}/metrics")
     print(
         f"[performance_exporter] retrain: threshold={F1_THRESHOLD} "
-        f"consecutive={WINDOW_CONSECUTIVE} enabled={TRIGGER_RETRAIN}"
+        f"consecutive={WINDOW_CONSECUTIVE} trigger_enabled={TRIGGER_RETRAIN} "
+        f"run_retrain={RUN_RETRAIN}"
     )
 
     start_http_server(PERF_METRICS_PORT)
@@ -87,7 +89,7 @@ def main() -> None:
         ACCURACY_WINDOW.set(acc)
         F1_MACRO_WINDOW.set(mf1)
 
-        if mf1 < F1_THRESHOLD:
+        if mf1 <= F1_THRESHOLD:
             consecutive_below += 1
         else:
             consecutive_below = 0
@@ -99,14 +101,17 @@ def main() -> None:
 
         if TRIGGER_RETRAIN and consecutive_below >= WINDOW_CONSECUTIVE:
             RETRAIN_TRIGGERS.inc()
-            print("[performance_exporter] retrain condition met -> launching train_retrain")
             consecutive_below = 0
 
-            try:
-                run_retrain()
-                print("[performance_exporter] retrain complete")
-            except Exception as e:
-                print(f"[performance_exporter] retrain failed: {e}")
+            if RUN_RETRAIN:
+                print("[performance_exporter] retrain trigger condition met -> launching train_retrain")
+                try:
+                    run_retrain()
+                    print("[performance_exporter] retrain complete")
+                except Exception as e:
+                    print(f"[performance_exporter] retrain failed: {e}")
+            else:
+                print("[performance_exporter] retrain trigger condition met -> retrain skipped (RUN_RETRAIN=False)")
 
         time.sleep(PERF_INTERVAL_SECONDS)
 
