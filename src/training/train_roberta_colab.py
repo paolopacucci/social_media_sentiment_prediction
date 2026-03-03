@@ -7,6 +7,7 @@ from transformers import (TrainingArguments, Trainer, EarlyStoppingCallback,)
 from src.config import (
     MODEL_BASE,
     SPLIT_DIR,
+    TEST_DIR_SPLIT,
     TRAIN_BATCH_SIZE,
     EVAL_BATCH_SIZE,
     LEARNING_RATE,
@@ -30,13 +31,12 @@ from src.training.train_utils import (
 
 
 def main() -> None:
-
     prepare_training_data()
     split_training_data()
 
     train_df = load_split(SPLIT_DIR, "train")
     val_df = load_split(SPLIT_DIR, "val")
-    test_df = load_split(SPLIT_DIR, "test")
+    test_df = load_split(TEST_SPLIT_DIR, "test")
 
     tokenizer = build_tokenizer(MODEL_BASE)
 
@@ -87,7 +87,10 @@ def main() -> None:
 
     ARTIFACT_MODEL_DIR.mkdir(parents=True, exist_ok=True)
 
-    metrics_path = ARTIFACT_MODEL_DIR / "final_metrics.json"
+    reports_dir = Path("reports/train")
+    reports_dir.mkdir(parents=True, exist_ok=True)
+    metrics_path = reports_dir / "final_metrics.json"
+    
     with open(metrics_path, "w", encoding="utf-8") as f:
         json.dump(metrics, f, indent=2, ensure_ascii=False)
 

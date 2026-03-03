@@ -19,6 +19,7 @@ RAW_PERFORMANCE_MONITORING_BATCH = Path("data/raw/performance_monitoring_batch_r
 PREPROCESSED_DIR = Path("data/preprocessed")
 SPLIT_DIR = Path("data/split/train")
 SPLIT_DIR_RETRAIN = Path("data/split/retrain")
+TEST_DIR_SPLIT = Path("data/split/shared")
 
 ARTIFACT_MODEL_DIR = Path("/content/drive/MyDrive/social_media_reputation/artifacts/model")
 ARTIFACT_MODEL_DIR_RETRAIN = Path("artifacts/retrain_model")
@@ -57,4 +58,4 @@ PERF_METRICS_PORT = 8001
 WINDOW_CONSECUTIVE = 1
 F1_THRESHOLD = 0.85
 TRIGGER_RETRAIN = True
-RUN_RETRAIN = False
+RUN_RETRAIN = True

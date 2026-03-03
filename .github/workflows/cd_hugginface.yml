@@ -37,6 +37,7 @@ jobs:
 
           shutil.copy("Dockerfile", deploy_dir / "Dockerfile")
           shutil.copy("requirements.txt", deploy_dir / "requirements.txt")
+          shutil.copy("requirements-cpu.txt", deploy_dir / "requirements-cpu.txt")
           shutil.copytree("src", deploy_dir / "src", dirs_exist_ok=True)
 
           config_path = deploy_dir / "src" / "config.py"

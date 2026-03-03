@@ -7,6 +7,7 @@ from src.config import (
     MODEL_ID,
     ARTIFACT_MODEL_DIR_RETRAIN,
     SPLIT_DIR_RETRAIN,
+    TEST_DIR_SPLIT,
     TRAIN_BATCH_SIZE,
     EVAL_BATCH_SIZE,
     LEARNING_RATE,
@@ -65,7 +66,7 @@ def main()-> None:
 
     train_df = load_split(SPLIT_DIR_RETRAIN, "train")
     val_df = load_split(SPLIT_DIR_RETRAIN, "val")
-    test_df = load_split(SPLIT_DIR_RETRAIN, "test")
+    test_df = load_split(TEST_DIR_SPLIT, "test")
 
     tokenizer = build_tokenizer(MODEL_ID)
     model = build_model(MODEL_ID)
@@ -118,7 +119,10 @@ def main()-> None:
         "test_macro_f1": float(test_metrics.get("test_macro_f1", 0.0)),
     }
 
-    metrics_path = ARTIFACT_MODEL_DIR_RETRAIN / "retrain_metrics.json"
+    reports_dir = Path("reports/retrain")
+    reports_dir.mkdir(parents=True, exist_ok=True)
+    metrics_path = reports_dir / "retrain_metrics.json"
+
     with open(metrics_path, "w", encoding="utf-8") as f:
         json.dump(metrics, f, indent=2, ensure_ascii=False)
 
