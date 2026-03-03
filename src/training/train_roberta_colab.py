@@ -36,7 +36,7 @@ def main() -> None:
 
     train_df = load_split(SPLIT_DIR, "train")
     val_df = load_split(SPLIT_DIR, "val")
-    test_df = load_split(TEST_SPLIT_DIR, "test")
+    test_df = load_split(TEST_DIR_SPLIT, "test")
 
     tokenizer = build_tokenizer(MODEL_BASE)
 
