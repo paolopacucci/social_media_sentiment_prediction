@@ -25,6 +25,7 @@ services:
       - ./data:/app/data
       - ./artifacts:/app/artifacts
       - ./reports:/app/reports
+      - ./.hf_cache:/app/.hf_cache
     restart: unless-stopped
 
   sentiment_generator:

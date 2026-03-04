@@ -21,7 +21,7 @@ SPLIT_DIR = Path("data/split/train")
 SPLIT_DIR_RETRAIN = Path("data/split/retrain")
 TEST_DIR_SPLIT = Path("data/split/shared")
 
-ARTIFACT_MODEL_DIR = Path("/content/drive/MyDrive/social_media_reputation/artifacts/model")
+ARTIFACT_MODEL_DIR_TRAIN = Path("artifacts/train_model")
 ARTIFACT_MODEL_DIR_RETRAIN = Path("artifacts/retrain_model")
 
 # Derived paths

@@ -14,7 +14,7 @@ from src.config import (
     MODEL_ID,
     TEXT_COL, 
     LABEL_COL,
-    ARTIFACT_MODEL_DIR,
+    ARTIFACT_MODEL_DIR_TRAIN,
     PUSH_AFTER_TRAIN, 
 )
 from src.data.prepare_data import prepare_training_data
@@ -48,7 +48,7 @@ def main() -> None:
 
 
     args = TrainingArguments(
-        output_dir=ARTIFACT_MODEL_DIR,
+        output_dir=ARTIFACT_MODEL_DIR_TRAIN,
         per_device_train_batch_size=TRAIN_BATCH_SIZE,
         per_device_eval_batch_size=EVAL_BATCH_SIZE,
         learning_rate=LEARNING_RATE,
@@ -85,7 +85,7 @@ def main() -> None:
         "test_macro_f1": float(test_metrics.get("test_macro_f1", 0.0)),
     }
 
-    ARTIFACT_MODEL_DIR.mkdir(parents=True, exist_ok=True)
+    ARTIFACT_MODEL_DIR_TRAIN.mkdir(parents=True, exist_ok=True)
 
     reports_dir = Path("reports/train")
     reports_dir.mkdir(parents=True, exist_ok=True)
@@ -94,15 +94,15 @@ def main() -> None:
     with open(metrics_path, "w", encoding="utf-8") as f:
         json.dump(metrics, f, indent=2, ensure_ascii=False)
 
-    trainer.save_model(str(ARTIFACT_MODEL_DIR))
-    tokenizer.save_pretrained(str(ARTIFACT_MODEL_DIR))
+    trainer.save_model(str(ARTIFACT_MODEL_DIR_TRAIN))
+    tokenizer.save_pretrained(str(ARTIFACT_MODEL_DIR_TRAIN))
 
-    print(f"Saved model to: {ARTIFACT_MODEL_DIR}")
+    print(f"Saved model to: {ARTIFACT_MODEL_DIR_TRAIN}")
     print(f"Saved final metrics to: {metrics_path}")
     print(json.dumps(metrics, indent=2, ensure_ascii=False))
 
     if PUSH_AFTER_TRAIN:
-        push_model_dir(ARTIFACT_MODEL_DIR, commit_prefix="initial-train")
+        push_model_dir(ARTIFACT_MODEL_DIR_TRAIN, commit_prefix="initial-train")
 
 if __name__ == "__main__":
     main()
