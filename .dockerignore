@@ -1,5 +1,6 @@
 .git
 .github
+
 .venv
 __pycache__
 .pytest_cache
@@ -7,17 +8,13 @@ __pycache__
 *.pyc
 *.pyo
 *.pyd
+
 .DS_Store
 Thumbs.db
 
-tests
 artifacts
 reports
-htmlcov
-.ipynb_checkpoints
-
-data/raw
-data/preprocessed
-data/split
-
+data
 .hf_cache
+
+*.ipynb
