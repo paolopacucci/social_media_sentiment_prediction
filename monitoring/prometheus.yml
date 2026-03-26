@@ -1,0 +1,24 @@
+# Configurazione di Prometheus per il progetto.
+
+# Intervallo di scraping.
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  # Raccoglie le metriche esposte dall'API.
+  - job_name: "api"
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["api:8000"]
+
+  # Raccoglie le metriche del servizio di monitoraggio delle performance.
+  - job_name: "performance_exporter"
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["performance_exporter:8001"]
+
+  # Raccoglie le metriche del servizio di monitoraggio del sentiment.
+  - job_name: "sentiment_generator"
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["sentiment_generator:8002"]

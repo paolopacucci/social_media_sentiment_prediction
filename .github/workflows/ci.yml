@@ -1,0 +1,44 @@
+name: CI - tests
+
+# Esegue la pipeline di Continuos Integration a ogni push e pull request.
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      # Scarica il contenuto del repository in GitHub Actions.
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Configura ambiente Python usato dalla pipeline CI.  
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      # Installa dependencies necessarie per lint e test.
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install flake8 pytest
+          pip install -r requirements.txt
+          pip install -r requirements-cpu.txt
+
+      # Esegue due controlli flake8.    
+      - name: Lint with flake8
+        run: |
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+          flake8 . --count --exit-zero --max-line-length=127 --statistics
+
+      # Esegue i test con pytest.    
+      - name: Run tests
+        env:
+          PYTHONPATH: .
+        run: |
+          python -m pytest -q

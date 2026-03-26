@@ -1,0 +1,11 @@
+# Definisce Prometheus come sorgente di dati predefinito.
+# Grafana può usare subito le metriche senza configurazione manuale.
+
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    isDefault: true

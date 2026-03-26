@@ -1,0 +1,14 @@
+# Questo file dice a Grafana di caricare all'avvio 
+# le dashboard salvate come file nella cartella indicata. 
+
+apiVersion: 1
+
+providers:
+  - name: "default"
+    orgId: 1
+    folder: ""
+    type: file
+    disableDeletion: false
+    editable: true
+    options:
+      path: /var/lib/grafana/dashboards

@@ -1,0 +1,86 @@
+# Avvia i servizi principali della pipeline MLOps
+
+services:
+  # API di serving.
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: api
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped
+
+  # Monitoring delle performance.
+  performance_exporter:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: performance_exporter
+    # Usa un utente esplicito per ridurre problemi di permessi sui file creati nei volumi montati.
+    user: "1000:1000"
+    # Esegue il servizio del monitoraggio delle performance e l'eventuale trigger del retrain.
+    command: python -m src.monitoring.performance_exporter
+    depends_on:
+      - api
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./data:/app/data
+      - ./artifacts:/app/artifacts
+      - ./reports:/app/reports
+      - ./.hf_cache:/app/.hf_cache
+    restart: unless-stopped
+
+  # Monitoring del sentiment.
+  sentiment_generator:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sentiment_generator
+    # Esegue il servizio che genera batch di testi non etichettati per il monitoraggio del sentiment.
+    command: python -m src.monitoring.sentiment_generator
+    depends_on:
+      - api
+    ports:
+      - "8002:8002"
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped
+
+  # Raccolta metriche con Prometheus.
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    volumes:
+      # Monta la configurazione Prometheus del progetto in sola lettura.
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    depends_on:
+      - api
+      - performance_exporter
+      - sentiment_generator
+    restart: unless-stopped
+
+  # Dashboard Grafana.
+  grafana:
+    image: grafana/grafana-oss:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    volumes:
+      # Provisioning automatico di datasource e dashboard Grafana.
+      - ./monitoring/grafana/provisioning/datasources/datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml:ro
+      - ./monitoring/grafana/provisioning/dashboards/dashboards.yml:/etc/grafana/provisioning/dashboards/dashboards.yml:ro
+      - ./monitoring/grafana/dashboards/sentiment_dashboard.json:/var/lib/grafana/dashboards/sentiment_dashboard.json:ro
+    depends_on:
+      - prometheus
+    restart: unless-stopped
